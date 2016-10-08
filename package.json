@@ -1,0 +1,19 @@
+{
+  "name": "info-management",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bensm1th/tlc-info-managment.git"
+  },
+  "author": "Ben Smith",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bensm1th/tlc-info-managment/issues"
+  },
+  "homepage": "https://github.com/bensm1th/tlc-info-managment#readme"
+}
