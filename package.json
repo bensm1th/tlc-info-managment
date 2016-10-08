@@ -15,5 +15,15 @@
   "bugs": {
     "url": "https://github.com/bensm1th/tlc-info-managment/issues"
   },
-  "homepage": "https://github.com/bensm1th/tlc-info-managment#readme"
+  "homepage": "https://github.com/bensm1th/tlc-info-managment#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "connect": "^3.5.0",
+    "express": "^4.14.0",
+    "flash": "^1.1.0",
+    "method-override": "^2.3.6",
+    "mongoose": "^4.6.3",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
+  }
 }
