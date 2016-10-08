@@ -10,7 +10,10 @@ var express         = require('express'),
     localStrategy   = require('passport-local'),
 
     //add models
-    Employee        = require('./models/employees');
+    Employee        = require('./models/employees'),
+
+    //add routes
+    authRoutes      = require('./routes/auth');
 
 mongoose.connect(config.dbLocation);
 
@@ -28,6 +31,8 @@ app.use(require('express-session')({
     saveUninitialized: false
 }));
 
+//enable routes
+app.use(authRoutes);
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -35,9 +40,7 @@ passport.use(new localStrategy(Employee.authenticate()));
 passport.serializeUser(Employee.serializeUser());
 passport.deserializeUser(Employee.deserializeUser());
 
-app.get('/', function(req, res) {
-    res.send('APP IS WORKING');
-})
+
 
 app.listen(port, function() {
     console.log('tlc listening on port ' + port);
