@@ -13,7 +13,8 @@ var express         = require('express'),
     Employee        = require('./models/employees'),
 
     //add routes
-    authRoutes      = require('./routes/auth');
+    timestampRoute  = require('./routes/timestamp'),
+    employeeRoute   = require('./routes/employee');
 
 mongoose.connect(config.dbLocation);
 
@@ -30,18 +31,16 @@ app.use(require('express-session')({
     resave: false,
     saveUninitialized: false
 }));
-
-//enable routes
-app.use(authRoutes);
-
+/*
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new localStrategy(Employee.authenticate()));
 passport.serializeUser(Employee.serializeUser());
 passport.deserializeUser(Employee.deserializeUser());
-
-
-
+*/
+//enable routes
+app.use(employeeRoute);
+app.use(timestampRoute)
 app.listen(port, function() {
     console.log('tlc listening on port ' + port);
 });

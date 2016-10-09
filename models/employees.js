@@ -13,12 +13,7 @@ var employeeSchema = new mongoose.Schema({
     vacationDaysLeft: Number,
     hourlyPay: { applies: Boolean, rate: Number},
     salary: { applies: Boolean, rate: Number},
-    timeStamps: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Timestamp'
-    }]
+    currentlyWorking: Boolean
 });
-
-employeeSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('Employee', employeeSchema);
