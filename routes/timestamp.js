@@ -21,15 +21,36 @@ router.post('/timestamp', function(req, res) {
                 if (err) console.log(err);
                 else {
                     var logState = "You just ";
+                    
                     if (!foundEmployee[0].currentlyWorking) {
-                        newlyCreatedTimestamp.logIn = true;
-                        foundEmployee[0].currentlyWorking = true;
-                        logState += "logged in";
+                        //check to see if the person clicked 'log in'
+                        if (req.body.clock == 'in') {
+                            //go ahead an log them in
+                            newlyCreatedTimestamp.logIn = true;
+                            foundEmployee[0].currentlyWorking = true;
+                            logState += "logged in";
+                        } else {
+                            //flag as inappropriate, because the person is trying to log out when they are already logged out
+                            newlyCreatedTimestamp.logIn = false;
+                            foundEmployee[0].currentlyWorking = false;
+                            //do some error handling here, either directly, or fired off of when a timestamp is inappropriate
+                            newlyCreatedTimestamp.inappropriate = true;
+                            logState += "logged out, but something was wrong";
+                        }
                     }
                     else {
-                        newlyCreatedTimestamp.logIn = false;
-                        foundEmployee[0].currentlyWorking = false;
-                        logState += "logged out";
+                        //check to see if the employee clicked 'log out'
+                        if (req.body.clock == 'out') {
+                            //go ahead and log them out.  
+                            newlyCreatedTimestamp.logIn = false;
+                            foundEmployee[0].currentlyWorking = false;
+                            logState += "logged out";
+                        } else {
+                            //flag as inappropriate because they are trying to log in when they are already logged in 
+                            newlyCreatedTimestamp.logIn = true;
+                            foundEmployee[0].currentlyWorking = true;
+                            logState += "logged in, but something was wrong";
+                        }
                     }
                     newlyCreatedTimestamp.save();
                     foundEmployee[0].save();

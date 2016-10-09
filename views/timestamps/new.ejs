@@ -2,6 +2,8 @@
 <h1>YOU'VE HIT THE NEW TIMESTAMP ROUTE</h1>
 <form action="/timestamp" method="POST">
     <input type="text" name='employeeNumber' placeholder="ID#">
+    <input type="radio" name="clock" value="in"> IN<br>
+    <input type="radio" name="clock" value="out"> OUT<br>
     <button>Submit</button>
 </form>
 <% include ../partials/footer %>
