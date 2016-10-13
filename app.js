@@ -38,6 +38,13 @@ passport.use(new localStrategy(Employee.authenticate()));
 passport.serializeUser(Employee.serializeUser());
 passport.deserializeUser(Employee.deserializeUser());
 */
+// use this for all middleware
+/*
+app.use(function(req, res, next) {
+    res.locals.error = req.flash('error');
+    res.locals.success = req.flash('success');
+});
+*/
 //enable routes
 app.use(employeeRoute);
 app.use(timestampRoute)
