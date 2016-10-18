@@ -3,21 +3,32 @@ var express     = require('express'),
     mongoose    = require('mongoose'),
     Employee    = require('../models/employees');
 
-router.get('/signup', function(req, res) {
-    res.render('signup');
+
+
+//INDEX
+router.get('/employee', function(req, res) {
+    Employee.find({}, function(err, employees) {
+        res.render('employees/index', {employees: employees});
+    });
 });
 
-router.post('/signup', function(req, res) {
+//NEW 
+router.get('/employee/new', function(req, res) {
+    res.render('employees/new');
+});
+
+//CREATE
+router.post('/employee/new', function(req, res) {
 
     var newEmployee = ({
         firstName: req.body.firstName,
-        lastName: 'lastName',
+        lastName: req.body.lastName,
         employeeNumber: req.body.employeeNumber,
-        address: 'address',
-        phone: 1234,
-        DOB: Date.now(),
-        sickDaysLeft: 1234,
-        vacationDaysLeft: 1234,
+        address: req.body.address,
+        phone: req.body.phone,
+        DOB: req.body.DOB,
+        sickDaysLeft: req.body.sickDaysLeft,
+        vacationDaysLeft: req.body.vacationDaysLeft,
         hourlyPay: { applies: false, rate: 0},
         salary: { applies: true, rate: 1234},
         timeStamps: [],
@@ -33,5 +44,28 @@ router.post('/signup', function(req, res) {
     });
 });
 
+//SHOW
+router.get('/employee/:id', function(req, res) {
+    Employee.findById(req.params.id).exec(function(err, employee) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render('employees/show', {employee: employee});
+        }
+    });
+});
+
+//EDIT
+router.get('/employee/:id/edit', function(req, res) {
+    Employee.findById(req.params.id, function(err, employee) {
+        res.render('employees/edit', {employee: employee});
+    });
+});
+
+//UPDATE
+router.put('employee/:id', function(req, res) {
+    //findbyidandupdate
+    res.send('you hit the update route')
+});
 
 module.exports = router;

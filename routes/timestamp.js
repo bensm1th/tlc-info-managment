@@ -86,9 +86,6 @@ router.get('/timestamp/:id', function(req, res) {
 
 //this route will return all the timestamps between two given dates for an employee
 router.post('/timestamp2/:id', function(req, res) {
-    var period = getNumberOfDays(req.body.beginning, req.body.end);
-    var hoursInfo = makeHoursInfo(period, req.body.beginning);
-    console.log(hoursInfo);
     Employee.findById(req.params.id, function(err, employee) {
         if (err) {
             console.log(err);
@@ -97,52 +94,41 @@ router.post('/timestamp2/:id', function(req, res) {
                 if (err) {
                     console.log(err);
                 } else {
-                    hoursInfo.forEach((day, index)=> {
-                        var filtered = timestamps.filter(timestamp=> {
-                            return timestamp.time > day.day && timestamp.time < addDays(day.day, 1);
-                        });
-                        //console.log(filtered);
-                    });
-                    
-                    /*
-                    var filtered = timestamps.filter(timestamp=>{
-                        var beginning = new Date(req.body.beginning);
-                        var end = new Date(req.body.end);
-                        //var newDate = new Date('October, 12, 2016, 11:15 am');
-                        return timestamp.time > beginning && timestamp.time < end;
-                    });
-                    
-                    //console.log(filtered);
-                    var timesWorked=[];
-                    var clockedInCount = 0;
-                    var clockedInTime;
-                    var timeWorked;
-                    filtered.forEach(timestamp=> {
-                        var clock = timestamp.logIn === true ? "in":"out";
-                        if (timestamp.logIn) {
-                            if (clockedInCount === 0) {
-                                clockedInTime = timestamp.time;
-                                clockedInCount++;
-                            }
-                        } if (!timestamp.logIn) {
-                            if (clockedInCount === 1) {
-                                timeWorked = timestamp.time - clockedInTime;
-                                timesWorked.push(timeWorked);
-                                clockedInCount--;
-                            }
-                        }
-                    });
-                    timesWorked.forEach(time=> {
-                        var converted = (time/1000)/60;
-                        console.log(converted)
-                    });
-                    */
+                    var sorted = sortDates(timestamps);
+                    var makePeriods = createPeriods(req.body.beginning, req.body.end, sorted, req.params.id);
                 }
-                res.send('you hit the timestamps show route');
+                res.json(makePeriods);
             });
         }
     });
 });
+
+router.post('/timestamp3/:id', function(req, res) {
+    Employee.findById(req.params.id, function(err, employee) {
+        if (err) {
+            console.log(err);
+        } else {
+            Timestamp.find({'employee': req.params.id}, function(err, timestamps) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    timestamps.forEach(stamp=> {
+                        console.log(stamp.time);
+                    });
+                    console.log(' ');
+                    console.log('===============================');
+                    console.log(' ');
+                    var sorted = sortDates(timestamps);
+                    sorted.forEach(stamp=> {
+                        console.log(stamp.time);
+                    });
+                }
+                res.send('you hit the timestamp3 route');
+            });
+        }
+    })
+});
+
 function getNumberOfDays(beginning, end) {
     var beginning = new Date(beginning);
     var end = new Date(end);
@@ -153,13 +139,61 @@ function addDays(date, days) {
     result.setDate(result.getDate() + days);
     return result;
 }
-function makeHoursInfo(period, beginning) {
+function makeHoursInfo(period, beginning, timestamps) {
     var arr = [];
-    for (var i = 0; i < period; i++) {
-        arr.push({day: addDays(beginning, i), timestamps: [], workedPeriod: []});
+    for (var i = 0; i <= period; i++) {
+        var day = addDays(beginning, i);
+        var filteredTimestamps = timestamps.filter(timestamp=> {             
+            return timestamp.time > day && timestamp.time < addDays(day, 1);
+        });
+        var workedPeriod = [];
+        var startClock;
+        var startTime;
+        filteredTimestamps.forEach(timestamp=> {
+            if (timestamp.logIn  && !startClock) {
+                startClock = true;
+                startTime = timestamp.time;
+            }
+            if (!timestamp.logIn && startClock) {
+                startClock = false;
+                var periodLength = timestamp.time - startTime;
+                var periodString = startTime + "-" + timestamp.time;
+                workedPeriod.push({period: periodString, periodLength: periodLength});
+            }
+        });
+        arr.push({day: day, timestamps: filteredTimestamps, workedPeriod: workedPeriod});
     }
     return arr;
 }
 
+function sortDates(arrayOfDates) {
+    return arrayOfDates.sort(function(a,b) {
+       return new Date(a.time) - new Date(b.time);
+    });
+}
 
+function createPeriods(beginning, end, timestamps, employeeId) {
+    var startClock, startTime, timePeriods = [];
+    var beginning = new Date(beginning);
+    var end = new Date(end);
+    var start = new Date(beginning.setHours(0,0,0,0));
+    var stop = new Date(end.setHours(23,59,59,999));
+    timestamps.forEach(timestamp=> {
+        if (timestamp.logIn && !startClock) {
+            startClock = true;
+            startTime = timestamp.time;
+        }
+        if (!timestamp.logIn && startClock) {
+            startClock = false;
+            var periodLength = timestamp.time - startTime;
+            var periodStart = startTime;
+            var periodEnd = timestamp.time;
+            var periodString = startTime + "-" + timestamp.time;
+            timePeriods.push({periodLength: periodLength, periodString: periodString, periodStart: periodStart, periodEnd: periodEnd, employeeId: employeeId});
+        }
+    });
+    return timePeriods.filter(period=>{
+        return period.periodStart > start && period.periodStart < stop;
+    });
+}
 module.exports = router; 
