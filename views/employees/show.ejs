@@ -9,7 +9,10 @@
     <li> DOB: <%= employee.DOB %> </li>
     <li> Sick Days Left: <%= employee.sickDaysLeft %> </li>
     <li> Vacation Days Left:    <%= employee.vacationDaysLeft %> </li>
-    <a href="/employee/<%= employee._id %>/edit">edit</a>
+    <a href="/employee/<%= employee._id %>/edit"><button>edit</button></a>
+    <a href="/employee"><button>back</button></a>
+    <a href="/employee/<%= employee._id %>/hours/new"><button>calculate hours</button></a>
+    
     
 
 <% include ../partials/footer %>

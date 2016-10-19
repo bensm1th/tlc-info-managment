@@ -63,9 +63,15 @@ router.get('/employee/:id/edit', function(req, res) {
 });
 
 //UPDATE
-router.put('employee/:id', function(req, res) {
-    //findbyidandupdate
-    res.send('you hit the update route')
+router.put('/employee/:id', function(req, res) {
+    Employee.findByIdAndUpdate(req.params.id, req.body.employee, function(err, employee) {
+        if (err) {
+            res.redirect("/employee");
+        } else {
+            res.redirect("/employee/" + req.params.id);
+        }
+    });
+    
 });
 
 module.exports = router;

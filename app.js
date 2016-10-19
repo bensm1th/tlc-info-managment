@@ -14,7 +14,9 @@ var express         = require('express'),
 
     //add routes
     timestampRoute  = require('./routes/timestamp'),
-    employeeRoute   = require('./routes/employee');
+    employeeRoute   = require('./routes/employee'),
+    calendarRoute   = require('./routes/calendar'),
+    hoursRoute      = require('./routes/hours');
 
 mongoose.connect(config.dbLocation);
 
@@ -47,7 +49,10 @@ app.use(function(req, res, next) {
 */
 //enable routes
 app.use(employeeRoute);
-app.use(timestampRoute)
+app.use(timestampRoute);
+app.use(hoursRoute);
+app.use(calendarRoute);
+
 app.listen(port, function() {
     console.log('tlc listening on port ' + port);
 });
